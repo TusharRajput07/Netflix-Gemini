@@ -8,6 +8,7 @@ import { OPTIONS } from "../utils/constants";
 import CardList from "./CardList";
 import { useMediaQuery, useTheme } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const Search = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const Search = () => {
       "https://api.themoviedb.org/3/search/movie?query=" +
         movie +
         "&include_adult=false&language=en-US&page=1",
-      OPTIONS
+      OPTIONS,
     );
     const json = await data.json();
     return json?.results;
@@ -42,23 +43,24 @@ const Search = () => {
       "https://api.themoviedb.org/3/search/tv?query=" +
         tv +
         "&include_adult=false&language=en-US&page=1",
-      OPTIONS
+      OPTIONS,
     );
     const json = await data.json();
     return json?.results;
   };
 
   //**********************************gemini search****************************************************
-  const { GoogleGenerativeAI } = require("@google/generative-ai");
 
   const handleGeminiSearch = async () => {
     try {
       setLoading(true);
 
       const genAI = new GoogleGenerativeAI(
-        process.env.REACT_APP_GEMINI_API_KEY
+        process.env.REACT_APP_GEMINI_API_KEY,
       );
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash-lite",
+      }); // ← updated model
 
       const prompt =
         "Act as a movie/TV shows recommendation system. Given the following query: '" +
@@ -74,24 +76,14 @@ const Search = () => {
         return;
       }
       setErrorMessage(null);
-      // console.log(result.response.text());
-
-      // returned result from gemini example
-      // When Harry Met Sally, Love Actually, The Proposal, 500 Days of Summer, Easy A
 
       const geminiMediaList = result.response.text().split(", ");
-
-      // ['When Harry Met Sally', 'Love Actually', 'The Proposal', '500 Days of Summer', 'Easy A']
-
-      // dividing the gemini list in 2 halves. one for movies and other for tv shows.
 
       const list1 = geminiMediaList.slice(0, 10);
       const list2 = geminiMediaList.slice(10);
 
       const promiseMovieList = list1.map((media) => fetchMovies(media));
       const promiseTvList = list2.map((media) => fetchTV(media));
-
-      // [Promise, Promise, Promise, Promise, Promise]
 
       const tmdbMovieResults = await Promise.all(promiseMovieList);
       const tmdbTvResults = await Promise.all(promiseTvList);
@@ -109,6 +101,7 @@ const Search = () => {
       setLoading(false);
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
 
@@ -191,7 +184,7 @@ const Search = () => {
           </div>
         )}
         <div className="text-[#7d7d7d] text-xs md:text-sm flex items-center font-light absolute right-5 md:right-10 bottom-5">
-          search feature powered by gemini-1.5 flash APIs
+          search feature powered by gemini APIs
           <img
             className="w-10 md:w-20 h-10 object-cover ml-2 md:ml-3 rounded-full shadow-[#156EEA] shadow-md"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2BbgiNKtFJXxzi-xOwojRWvboVSHuO7Vt6g&s"

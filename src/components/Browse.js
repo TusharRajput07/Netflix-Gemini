@@ -23,7 +23,7 @@ const Browse = () => {
   const cardsRef = useRef(null);
   const [containerHeight, setContainerHeight] = useState();
   const recommendedMovies = useSelector(
-    (store) => store?.movies?.recommendedMovies
+    (store) => store?.movies?.recommendedMovies,
   );
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const Browse = () => {
 
   const getHeight = () => {
     setContainerHeight(
-      videoRef?.current?.clientHeight + cardsRef?.current?.clientHeight
+      videoRef?.current?.clientHeight + cardsRef?.current?.clientHeight,
     );
   };
 

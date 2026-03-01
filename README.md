@@ -1,4 +1,4 @@
-### Project Details So Far ###
+### Project Details So Far
 
 # Used Create React App to kick start the project.
 
@@ -46,6 +46,6 @@
 
 # added tailwind media queries for making the app responsive on smallscreen devices.
 
-# added gemini 1.5 flash apis for search page and recommended movies.
+# added gemini 2.0 flash apis for search page and recommended movies.
 
 # fixed multiple UI bugs.
